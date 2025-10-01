@@ -1,0 +1,126 @@
+# YOLO11n Fine-tuning Pipeline Configuration
+
+# Experiment settings
+experiment:
+  name: "yolo11n_finetuning"
+  description: "Fine-tuning YOLO11n on custom dataset"
+  version: "1.0.0"
+
+# Model configuration
+model:
+  pretrained_weights: "yolo11n.pt"  # Path to pretrained YOLO11n weights
+  input_size: 640  # Input image size (640, 1280, etc.)
+  nc: 14  # Number of classes (update based on your dataset)
+
+# Data paths
+data:
+  data_yaml: "data/v1/data.yaml"  # Path to YOLO format dataset YAML
+  train_split: 0.8
+  val_split: 0.2
+
+# Directory paths
+paths:
+  checkpoint_dir: "outputs/checkpoints"
+  tensorboard_dir: "outputs/tensorboard"
+  log_dir: "outputs/logs"
+  export_dir: "outputs/exported_models"
+
+# Training configuration
+training:
+  experiment_name: "yolo11n_finetune"
+  use_gpu: true
+  batch_size: 32
+  num_workers: 8
+  seed: 42
+  
+  # Two-phase training
+  freeze_epochs: 1  # Epochs with frozen backbone
+  unfreeze_epochs: 50  # Epochs with unfrozen model
+  finetune_lr_multiplier: 0.1  # LR multiplier for phase 2
+  
+  # K-Fold cross-validation
+  kfold_splits: 5
+  
+  # Training optimizations
+  cache_images: false  # Cache images in RAM (requires sufficient memory)
+  use_amp: true  # Automatic Mixed Precision
+  
+  # Checkpointing
+  save_period: 1  # Save checkpoint every N epochs
+  
+  # Early stopping
+  early_stopping_patience: 10
+  early_stopping_min_delta: 0.0001
+
+# Optimizer configuration
+optimizer:
+  type: "AdamW"  # Options: SGD, Adam, AdamW, RMSProp
+  learning_rate: 0.001
+  final_lr_ratio: 0.01  # Final LR = lr0 * final_lr_ratio
+  momentum: 0.937  # For SGD
+  weight_decay: 0.0005
+  warmup_epochs: 3
+  
+  # Learning rate scheduler
+  scheduler:
+    type: "cosine"  # Options: linear, cosine, polynomial
+    min_lr: 0.00001
+
+# Loss function weights
+loss:
+  box_loss_weight: 7.5  # Box loss weight
+  cls_loss_weight: 0.5  # Classification loss weight
+  dfl_loss_weight: 1.5  # Distribution Focal Loss weight
+
+# Data augmentation
+augmentation:
+  enabled: true
+  
+  # Geometric augmentations
+  hsv_h: 0.015  # HSV-Hue augmentation
+  hsv_s: 0.7    # HSV-Saturation augmentation
+  hsv_v: 0.4    # HSV-Value augmentation
+  degrees: 0.0  # Rotation (+/- degrees)
+  translate: 0.1  # Translation (+/- fraction)
+  scale: 0.5    # Scale (+/- gain)
+  shear: 0.0    # Shear (+/- degrees)
+  perspective: 0.0  # Perspective (+/- fraction)
+  flipud: 0.0   # Vertical flip probability
+  fliplr: 0.5   # Horizontal flip probability
+  
+  # Mosaic and MixUp
+  mosaic: 1.0   # Mosaic augmentation probability
+  mixup: 0.0    # MixUp augmentation probability
+  copy_paste: 0.0  # Copy-paste augmentation probability
+  
+  # Advanced augmentations
+  auto_augment: "randaugment"  # Auto augmentation policy (randaugment, autoaugment, augmix)
+  erasing: 0.4  # Random erasing probability
+  crop_fraction: 1.0  # Crop fraction
+
+# Export configuration
+export:
+  format: "onnx"  # Export format
+  onnx_opset: 12  # ONNX opset version
+  simplify: true  # Simplify ONNX model
+  dynamic_shapes: false  # Use dynamic input shapes
+  
+  # Quantization
+  quantize: true
+  quantization_type: "int8"  # int8, fp16
+  
+  # Optimization
+  optimize_for_mobile: false
+
+# Inference configuration
+inference:
+  conf_threshold: 0.25  # Confidence threshold
+  iou_threshold: 0.45  # NMS IoU threshold
+  max_detections: 300  # Maximum detections per image
+  device: "cpu"  # Device for inference (cpu, cuda, 0, 1, etc.)
+
+# Logging
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  log_to_file: true
+  log_to_console: true

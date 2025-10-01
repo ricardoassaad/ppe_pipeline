@@ -1,0 +1,11 @@
+*.jpg
+*.png
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+
+*.txt
+
+*.yaml
+*.yml
