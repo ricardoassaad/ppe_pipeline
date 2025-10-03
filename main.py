@@ -426,7 +426,7 @@ class YOLOFineTuner:
                 model_input=onnx_model_path,
                 model_output=quantized_output_path,
                 weight_type=QuantType.QUInt8,
-                optimize_model=True,
+                # optimize_model=True,  # Uncomment since it does not exist in onnxruntime 1.15.0
                 extra_options={
                     'EnableSubgraph': True,
                     'EnableRewriter': True,

@@ -29,13 +29,13 @@ paths:
 training:
   experiment_name: "yolo11n_finetune"
   use_gpu: true
-  batch_size: 32
+  batch_size: 48
   num_workers: 8
   seed: 42
   
   # Two-phase training
-  freeze_epochs: 1  # Epochs with frozen backbone
-  unfreeze_epochs: 50  # Epochs with unfrozen model
+  freeze_epochs: 2  # Epochs with frozen backbone
+  unfreeze_epochs: 1000  # Epochs with unfrozen model
   finetune_lr_multiplier: 0.1  # LR multiplier for phase 2
   
   # K-Fold cross-validation
@@ -64,7 +64,7 @@ optimizer:
   # Learning rate scheduler
   scheduler:
     type: "cosine"  # Options: linear, cosine, polynomial
-    min_lr: 0.00001
+    min_lr: 0.000001
 
 # Loss function weights
 loss:
@@ -85,7 +85,7 @@ augmentation:
   scale: 0.5    # Scale (+/- gain)
   shear: 0.0    # Shear (+/- degrees)
   perspective: 0.0  # Perspective (+/- fraction)
-  flipud: 0.0   # Vertical flip probability
+  flipud: 0.5   # Vertical flip probability
   fliplr: 0.5   # Horizontal flip probability
   
   # Mosaic and MixUp
